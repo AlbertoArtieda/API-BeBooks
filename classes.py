@@ -22,7 +22,7 @@ class Libros(SQLModel, table=True):
     titulo: str
     curso: str
     puntos: Optional[int] = Field(default=3)
-    ID_usuario: Optional[int] = Field(default=None)
+    ID_usuario: int
     activo: Optional[int] = Field(default=1)
     imagen_libro: str
 
@@ -32,3 +32,7 @@ class Cambios(SQLModel, table=True):
     ID_user_compra: int
     ID_user_vende: int
     ID_libro: int
+
+class Login(SQLModel):
+    nombre: str
+    password: str
