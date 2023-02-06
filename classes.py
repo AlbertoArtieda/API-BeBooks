@@ -4,8 +4,8 @@ from datetime import datetime
 
 class Usuarios(SQLModel, table=True):
     ID_usuario: Optional[int] = Field(default=None, primary_key=True)
-    nombre: str
-    apellidos: str
+    nombre_apellidos: str
+    usuario: str
     ID_provincia: int
     password: str
     cp: int
@@ -36,3 +36,5 @@ class Cambios(SQLModel, table=True):
 class Login(SQLModel):
     nombre: str
     password: str
+
+    
