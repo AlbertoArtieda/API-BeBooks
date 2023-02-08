@@ -2,11 +2,20 @@ from typing import Optional
 from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime
 
+class Provincia(SQLModel, table=True):
+    ID_provincia: int = Field(primary_key=True)
+    provincia: str
+
+class Editorial(SQLModel, table=True):
+    Id_editorial: int = Field(primary_key=True)
+    provincia: str
+
 class UsuariosBase(SQLModel):
     nombre_apellidos: str
     usuario: str
     ID_provincia: int
-    # provincia: Relationship(Provincia, properties={'children': relationship(Child)})
+    # mapper(Parent, properties={'children': relationship(Child)})
+    provincia: Relationship(Provincia, properties={'provincia': Relationship(Provincia.provincia)})
     cp: int
     email: str
     telefono: int
@@ -40,10 +49,5 @@ class Login(SQLModel):
     nombre: str
     password: str
 
-class Provincia(SQLModel, table=True):
-    ID_provincia: int = Field(primary_key=True)
-    provincia: str
 
-class Editorial(SQLModel, table=True):
-    Id_editorial: int = Field(primary_key=True)
-    provincia: str
+

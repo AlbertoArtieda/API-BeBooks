@@ -1,7 +1,7 @@
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
-from classes import Login, Usuarios, Libros, Cambios
+from classes import Login, Usuarios, Libros, Cambios, UsuariosBase
 from config import *
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
@@ -15,7 +15,8 @@ def health_check():
 @app.post("/login")
 def login(usuario: Login):
     with Session(engine) as session:
-        statement = select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
+        statement = select(Usuarios).where(UsuariosBase.usuario == usuario.nombre and Usuarios.password == usuario.password)
+        print(len(session.exec(statement).all()) == 1)
         if (len(session.exec(statement).all()) == 1):
             return JSONResponse(status_code=status.HTTP_201_CREATED)
         else:
