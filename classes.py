@@ -15,7 +15,7 @@ class UsuariosBase(SQLModel):
     usuario: str
     ID_provincia: int
     # mapper(Parent, properties={'children': relationship(Child)})
-    provincia: Relationship(Provincia, properties={'provincia': Relationship(Provincia.provincia)})
+    # provincia: Relationship(Provincia, properties={'provincia': Relationship(Provincia.provincia)})
     cp: int
     email: str
     telefono: int
