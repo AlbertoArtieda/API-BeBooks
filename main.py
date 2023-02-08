@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
-from classes import Login, Usuarios, UsuariosLeer, Libros, Cambios
+from classes import *
 from config import *
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
@@ -38,6 +38,13 @@ def register(cambio: Cambios):
     with Session(engine) as session:
         session.add(cambio)
         session.commit()
+
+@app.get("/getProvincias")
+def getProvincias():
+    with Session(engine) as session:
+        session.exec(
+            select(Provincia.provincia).order_by(Provincia.ID_provincia)
+            ).all()
 
 @app.get("/prueba", response_model=UsuariosLeer)
 def prueba():

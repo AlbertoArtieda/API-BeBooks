@@ -55,6 +55,3 @@ class Cambios(SQLModel, table=True):
 class Login(SQLModel):
     nombre: str
     password: str
-
-
-
