@@ -1,7 +1,7 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
-from classes import Login, Usuarios, Libros, Cambios, UsuariosBase
+from classes import Login, Usuarios, UsuariosLeer, Libros, Cambios
 from config import *
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
@@ -12,15 +12,14 @@ app = FastAPI()
 def health_check():
     return "OK"
 
-@app.post("/login")
+@app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        statement = select(Usuarios).where(UsuariosBase.usuario == usuario.nombre and Usuarios.password == usuario.password)
-        print(len(session.exec(statement).all()) == 1)
-        if (len(session.exec(statement).all()) == 1):
-            return JSONResponse(status_code=status.HTTP_201_CREATED)
-        else:
-            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED)
+        usuario = session.exec(
+            select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
+        ).first()
+        if not usuario:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 @app.post("/register")
 def register(usuario: Usuarios):
@@ -40,3 +39,9 @@ def register(cambio: Cambios):
         session.add(cambio)
         session.commit()
 
+@app.get("/prueba", response_model=UsuariosLeer)
+def prueba():
+    session = Session(engine)
+    usuario = session.exec(select(Usuarios)).first()
+    print(usuario.provincia.provincia)
+    return usuario

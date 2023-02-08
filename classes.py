@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime
 
 class Provincia(SQLModel, table=True):
-    ID_provincia: int = Field(primary_key=True)
+    ID_provincia: Optional[int] = Field(default=None, primary_key=True)
     provincia: str
 
 class Editorial(SQLModel, table=True):
@@ -14,8 +14,6 @@ class UsuariosBase(SQLModel):
     nombre_apellidos: str
     usuario: str
     ID_provincia: int
-    # mapper(Parent, properties={'children': relationship(Child)})
-    # provincia: Relationship(Provincia, properties={'provincia': Relationship(Provincia.provincia)})
     cp: int
     email: str
     telefono: int
@@ -26,10 +24,19 @@ class UsuariosBase(SQLModel):
 class Usuarios(UsuariosBase, table=True):
     ID_usuario: Optional[int] = Field(default=None, primary_key=True)
     password: str
+    provincia: Provincia = Relationship(
+        sa_relationship_kwargs= {
+            "primaryjoin": "foreign(Provincia.ID_provincia) == Usuarios.ID_provincia",
+            "uselist": False
+        }
+    )
+
+class UsuariosLeer(UsuariosBase):
+    provincia: Provincia
 
 class Libros(SQLModel, table=True):
     ID_libro: Optional[int] = Field(default=None, primary_key=True)
-    isbn: int
+    isbn: str = Field(index=True)
     ID_editorial: int
     titulo: str
     curso: str
