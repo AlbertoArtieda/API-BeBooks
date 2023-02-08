@@ -1,19 +1,22 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime
 
-class Usuarios(SQLModel, table=True):
-    ID_usuario: Optional[int] = Field(default=None, primary_key=True)
+class UsuariosBase(SQLModel):
     nombre_apellidos: str
     usuario: str
     ID_provincia: int
-    password: str
+    # provincia: Relationship(Provincia, properties={'children': relationship(Child)})
     cp: int
     email: str
     telefono: int
     direccion: str
     imagen_perfil: Optional[str] = Field(default=None)
     puntos: int
+
+class Usuarios(UsuariosBase, table=True):
+    ID_usuario: Optional[int] = Field(default=None, primary_key=True)
+    password: str
 
 class Libros(SQLModel, table=True):
     ID_libro: Optional[int] = Field(default=None, primary_key=True)
@@ -37,4 +40,10 @@ class Login(SQLModel):
     nombre: str
     password: str
 
-    
+class Provincia(SQLModel, table=True):
+    ID_provincia: int = Field(primary_key=True)
+    provincia: str
+
+class Editorial(SQLModel, table=True):
+    Id_editorial: int = Field(primary_key=True)
+    provincia: str

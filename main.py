@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
 from classes import Login, Usuarios, Libros, Cambios
 from config import *
@@ -15,7 +16,10 @@ def health_check():
 def login(usuario: Login):
     with Session(engine) as session:
         statement = select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
-        print(len(session.exec(statement).all()))
+        if (len(session.exec(statement).all()) == 1):
+            return JSONResponse(status_code=status.HTTP_201_CREATED)
+        else:
+            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED)
 
 @app.post("/register")
 def register(usuario: Usuarios):
