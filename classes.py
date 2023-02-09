@@ -24,6 +24,7 @@ class UsuariosBase(SQLModel):
 class Usuarios(UsuariosBase, table=True):
     ID_usuario: Optional[int] = Field(default=None, primary_key=True)
     password: str
+    token: Optional[str] = Field(default=None)
     provincia: Provincia = Relationship(
         sa_relationship_kwargs= {
             "primaryjoin": "foreign(Provincia.ID_provincia) == Usuarios.ID_provincia",

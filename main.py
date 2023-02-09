@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
 from config import *
+import hashlib
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
@@ -15,6 +16,8 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
+        usuario.password = hashlib.new("sha256",usuario.password).hexdigest()
+        print(usuario.password)
         usuario = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
@@ -24,6 +27,7 @@ def login(usuario: Login):
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
+        usuario.password = hashlib.new("sha256",usuario.password).hexdigest()
         session.add(usuario)
         session.commit()
 
@@ -39,12 +43,14 @@ def register(cambio: Cambios):
         session.add(cambio)
         session.commit()
 
-@app.get("/getProvincias")
+@app.get("/getProvincias", response_model=Provincia)
 def getProvincias():
     with Session(engine) as session:
         session.exec(
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
+        return Provincia.provincia
+
 
 @app.get("/prueba", response_model=UsuariosLeer)
 def prueba():
