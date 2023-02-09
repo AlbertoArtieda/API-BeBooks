@@ -43,7 +43,7 @@ def register(cambio: Cambios):
         session.add(cambio)
         session.commit()
 
-@app.get("/getProvincias", response_model=Provincia)
+@app.get("/getProvincias")
 def getProvincias():
     with Session(engine) as session:
         return session.exec(
