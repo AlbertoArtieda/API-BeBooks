@@ -46,10 +46,9 @@ def register(cambio: Cambios):
 @app.get("/getProvincias", response_model=Provincia)
 def getProvincias():
     with Session(engine) as session:
-        session.exec(
+        return session.exec(
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
-        return Provincia.provincia
 
 
 @app.get("/prueba", response_model=UsuariosLeer)
