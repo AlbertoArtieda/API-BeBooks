@@ -17,7 +17,6 @@ def health_check():
 def login(usuario: Login):
     with Session(engine) as session:
         usuario.password = hashlib.new("sha256",usuario.password).hexdigest()
-        print(usuario.password)
         usuario = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
