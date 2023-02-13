@@ -38,7 +38,12 @@ class UsuariosLeer(UsuariosBase):
 class Libros(SQLModel, table=True):
     ID_libro: Optional[int] = Field(default=None, primary_key=True)
     isbn: str = Field(index=True)
-    ID_editorial: int
+    ID_editorial: Editorial = Relationship(
+        sa_relationship_kwargs= {
+            "primaryjoin": "foreign(Editorial.Id_editorial) == Libros.ID_editorial",
+            "uselist": False
+        }
+    )
     titulo: str
     curso: str
     puntos: Optional[int] = Field(default=3)

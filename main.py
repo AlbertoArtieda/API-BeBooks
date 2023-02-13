@@ -49,13 +49,19 @@ def getProvincias():
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
 
-@app.get("/Saleshistory")
+@app.post("/Saleshistory")
 def Saleshistory(usuario: Usuarios):
     with Session(engine) as session:
         return session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == usuario.ID_usuario and Libros.activo == 0)
             ).all()
 
+@app.get("/SearchBooks")
+def SearchBooks():
+    with Session(engine) as session:
+        return session.exec(
+            select(Libros).where(Libros.activo == 1)
+            ).all()
 
 @app.get("/prueba", response_model=UsuariosLeer)
 def prueba():
