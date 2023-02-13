@@ -48,7 +48,7 @@ def register(cambio: Cambios):
 def getProvincias():
     with Session(engine) as session:
         return session.exec(
-            select(Provincia).order_by(Provincia.ID_provincia)
+            select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
 
 @app.post("/Saleshistory")
