@@ -7,7 +7,7 @@ class Provincia(SQLModel, table=True):
     provincia: str
 
 class Editorial(SQLModel, table=True):
-    Id_editorial: int = Field(primary_key=True)
+    ID_editorial: int = Field(primary_key=True)
     provincia: str
 
 class UsuariosBase(SQLModel):
@@ -40,7 +40,7 @@ class Libros(SQLModel, table=True):
     isbn: str = Field(index=True)
     ID_editorial: Editorial = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Editorial.Id_editorial) == Libros.ID_editorial",
+            "primaryjoin": "foreign(Editorial.ID_editorial) == Libros.ID_editorial",
             "uselist": False
         }
     )
