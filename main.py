@@ -16,7 +16,9 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        usuario.password = hashlib.new("sha256",usuario.password).hexdigest()
+        print(usuario.password)
+        usuario.password = hashlib.sha256(usuario.password).hexdigest()
+        print(usuario.password)
         usuario = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
@@ -26,7 +28,7 @@ def login(usuario: Login):
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
-        usuario.password = hashlib.new("sha256",usuario.password).hexdigest()
+        usuario.password = hashlib.sha256(usuario.password).hexdigest()
         session.add(usuario)
         session.commit()
 
@@ -46,7 +48,7 @@ def register(cambio: Cambios):
 def getProvincias():
     with Session(engine) as session:
         return session.exec(
-            select(Provincia.provincia).order_by(Provincia.ID_provincia)
+            select(Provincia).order_by(Provincia.ID_provincia)
             ).all()
 
 @app.post("/Saleshistory")
@@ -62,10 +64,3 @@ def SearchBooks():
         return session.exec(
             select(Libros).where(Libros.activo == 1)
             ).all()
-
-@app.get("/prueba", response_model=UsuariosLeer)
-def prueba():
-    session = Session(engine)
-    usuario = session.exec(select(Usuarios)).first()
-    print(usuario.provincia.provincia)
-    return usuario

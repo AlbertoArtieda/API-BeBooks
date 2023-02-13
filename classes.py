@@ -8,7 +8,7 @@ class Provincia(SQLModel, table=True):
 
 class Editorial(SQLModel, table=True):
     ID_editorial: int = Field(primary_key=True)
-    provincia: str
+    editorial: str
 
 class UsuariosBase(SQLModel):
     nombre_apellidos: str
@@ -32,18 +32,8 @@ class Usuarios(UsuariosBase, table=True):
         }
     )
 
-class UsuariosLeer(UsuariosBase):
-    provincia: Provincia
-
-class Libros(SQLModel, table=True):
-    ID_libro: Optional[int] = Field(default=None, primary_key=True)
-    isbn: str = Field(index=True)
-    ID_editorial: Editorial = Relationship(
-        sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Editorial.ID_editorial) == Libros.ID_editorial",
-            "uselist": False
-        }
-    )
+class LibroBase(SQLModel):
+    ID_editorial: str
     titulo: str
     curso: str
     puntos: Optional[int] = Field(default=3)
@@ -51,24 +41,39 @@ class Libros(SQLModel, table=True):
     activo: Optional[int] = Field(default=1)
     imagen_libro: str
 
-class Cambios(SQLModel, table=True):
+class Libros(LibroBase, table=True):
+    ID_libro: Optional[int] = Field(default=None, primary_key=True)
+    isbn: str = Field(index=True)
+    editorial: Editorial = Relationship(
+        sa_relationship_kwargs= {
+            "primaryjoin": "foreign(Editorial.ID_editorial) == Libros.ID_editorial",
+            "uselist": False
+        }
+    )
+
+class CambioBase(SQLModel):
+    ID_user_compra: int
+    ID_user_vende: int
+    ID_libro: int
+
+class Cambios(CambioBase, table=True):
     ID_cambio: Optional[int] = Field(default=None, primary_key=True)
     fecha: datetime
-    ID_user_compra: Usuarios = Relationship(
+    user_compra: Usuarios = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Usuarios.ID_usuario) == Cambios.ID_user_compra",
+            "primaryjoin": "Usuarios.ID_usuario == foreign(Cambios.ID_user_compra)",
             "uselist": False
         }
     )
-    ID_user_vende: Libros = Relationship(
+    user_vende: Usuarios = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Usuarios.ID_usuario) == Cambios.ID_user_vende",
+            "primaryjoin": "Usuarios.ID_usuario == foreign(Cambios.ID_user_vende)",
             "uselist": False
         }
     )
-    ID_libro: Libros = Relationship(
+    libro: Libros = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Libros.ID_libro) == Cambios.ID_libro",
+            "primaryjoin": "Libros.ID_libro == foreign(Cambios.ID_libro)",
             "uselist": False
         }
     )
