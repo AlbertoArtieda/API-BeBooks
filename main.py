@@ -33,13 +33,13 @@ def register(usuario: Usuarios):
         session.commit()
 
 @app.post("/newbook")
-def register(libro: Libros):
+def newbook(libro: Libros):
     with Session(engine) as session:
         session.add(libro)
         session.commit()
 
 @app.post("/change")
-def register(cambio: Cambios):
+def change(cambio: Cambios):
     with Session(engine) as session:
         session.add(cambio)
         session.commit()
