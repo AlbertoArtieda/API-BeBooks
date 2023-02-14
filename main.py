@@ -29,8 +29,9 @@ def login(usuario: Login):
 def register(usuario: Usuarios):
     with Session(engine) as session:
         usuario.password = hashlib.sha256(usuario.password).hexdigest()
-        session.add(usuario)
-        session.commit()
+        return usuario
+        # session.add(usuario)
+        # session.commit()
 
 @app.post("/newbook")
 def newbook(libro: Libros):
