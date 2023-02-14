@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
 from config import *
-import hashlib
+from hashlib import sha256
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
@@ -16,9 +16,7 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        print(usuario.password)
-        usuario.password = hashlib.sha256(usuario.password).hexdigest()
-        print(usuario.password)
+        usuario.password = sha256().hexdigest()
         usuario = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
@@ -28,7 +26,7 @@ def login(usuario: Login):
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
-        usuario.password = hashlib.sha256(usuario.password).hexdigest()
+        usuario.password = sha256().hexdigest()
         session.add(usuario)
         session.commit()
 
