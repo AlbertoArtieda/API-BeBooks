@@ -19,7 +19,7 @@ class UsuariosBase(SQLModel):
     telefono: int
     direccion: str
     imagen_perfil: Optional[str] = Field(default=None)
-    puntos: int
+    puntos: Optional[int] = Field(default=0)
 
 class Usuarios(UsuariosBase, table=True):
     ID_usuario: Optional[int] = Field(default=None, primary_key=True)
