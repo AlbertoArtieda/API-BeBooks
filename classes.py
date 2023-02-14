@@ -61,19 +61,19 @@ class Cambios(CambioBase, table=True):
     fecha: datetime
     user_compra: Usuarios = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Usuarios.ID_usuario) == Cambios.ID_user_compra",
+            "primaryjoin": "foreign(Cambios.ID_usuario) == Usuarios.ID_user_compra",
             "uselist": False
         }
     )
     user_vende: Usuarios = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Usuarios.ID_usuario) == Cambios.ID_user_vende",
+            "primaryjoin": "foreign(Cambios.ID_usuario) == Usuarios.ID_user_vende",
             "uselist": False
         }
     )
     libro: Libros = Relationship(
         sa_relationship_kwargs= {
-            "primaryjoin": "foreign(Libros.ID_libro) == Cambios.ID_libro",
+            "primaryjoin": "foreign(Cambios.ID_libro) == Libros.ID_libro",
             "uselist": False
         }
     )
