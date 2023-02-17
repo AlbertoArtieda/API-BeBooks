@@ -81,3 +81,4 @@ class Cambios(CambioBase, table=True):
 class Login(SQLModel):
     nombre: str
     password: str
+    token: Optional[str] = Field(default=None)

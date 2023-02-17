@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
 from config import *
 from hashlib import sha256
+import datetime
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
@@ -20,6 +21,9 @@ def login(usuario: Login):
         usuario = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
+        usuario.token = usuario.nombre + datetime.datetime.now()
+        usuario.token = sha256().hexdigest()
+        session.add(usuario.token)
         if not usuario:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
