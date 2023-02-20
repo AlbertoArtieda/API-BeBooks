@@ -28,7 +28,6 @@ def login(usuario: Login):
         session.refresh(usuario)
         if not usuario:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-        return usuario.token
         
 
 @app.post("/dataUser")
