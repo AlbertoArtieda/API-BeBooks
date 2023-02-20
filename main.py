@@ -29,14 +29,6 @@ def login(usuario: Login):
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return user.token
-        
-
-@app.post("/dataUser")
-def dataUser(usuario: Login):
-    with Session(engine) as session:
-        return session.exec(
-            select(Usuarios).where(Usuarios.usuario == usuario.nombreLog)
-            ).first()
 
 @app.post("/register")
 def register(usuario: Usuarios):
