@@ -28,12 +28,11 @@ def login(usuario: Login):
         session.refresh(user)
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-        return user.token
 
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
-        usuario.password = sha256(usuario.password.encode()).hexdigest() 
+        usuario.password = sha256(usuario.password.encode()).hexdigest()
         session.add(usuario)
         session.commit()
 
