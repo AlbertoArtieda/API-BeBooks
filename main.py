@@ -41,7 +41,7 @@ def dataUser(usuario: Login):
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
-        usuario.password = sha256().hexdigest()
+        usuario.password = sha256(usuario.password.encode()).hexdigest()
         session.add(usuario)
         session.commit()
 
