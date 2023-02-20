@@ -79,5 +79,5 @@ class Cambios(CambioBase, table=True):
     )
 
 class Login(SQLModel):
-    nombreLog: str
-    passwordLog: str
+    nombre: str
+    password: str

@@ -17,9 +17,9 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        usuario.passwordLog = sha256().hexdigest()
+        usuario.password = sha256().hexdigest()
         usuario = session.exec(
-            select(Usuarios).where(Usuarios.usuario == usuario.nombreLog and Usuarios.password == usuario.passwordLog)
+            select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
         usuario.token = usuario.usuario + str(datetime.datetime.now())
         usuario.token = sha256().hexdigest()
