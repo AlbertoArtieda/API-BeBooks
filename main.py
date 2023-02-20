@@ -17,17 +17,18 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        usuario.password = sha256().hexdigest()
-        usuario = session.exec(
+        usuario.password = sha256(usuario.password.encode()).hexdigest()
+        user = session.exec(
             select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
         ).first()
-        usuario.token = usuario.usuario + str(datetime.datetime.now())
-        usuario.token = sha256().hexdigest()
-        session.add(usuario)
+        user.token = user.usuario + str(datetime.datetime.now())
+        user.token = sha256(user.token.encode()).hexdigest()
+        session.add(user)
         session.commit()
-        session.refresh(usuario)
-        if not usuario:
+        session.refresh(user)
+        if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        return user.token
         
 
 @app.post("/dataUser")
