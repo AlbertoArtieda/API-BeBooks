@@ -17,15 +17,24 @@ def health_check():
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
-        usuario.password = sha256().hexdigest()
+        usuario.passwordLog = sha256().hexdigest()
         usuario = session.exec(
-            select(Usuarios).where(Usuarios.usuario == usuario.nombre and Usuarios.password == usuario.password)
+            select(Usuarios).where(Usuarios.usuario == usuario.nombreLog and Usuarios.password == usuario.passwordLog)
         ).first()
-        usuario.token = usuario.nombre + datetime.datetime.now()
+        usuario.token = usuario.usuario + str(datetime.datetime.now())
         usuario.token = sha256().hexdigest()
-        session.add(usuario.token)
+        session.add(usuario)
+        session.commit()
+        session.refresh(usuario)
         if not usuario:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+@app.post("/dataUser")
+def dataUser(usuario: Login):
+    with Session(engine) as session:
+        return session.exec(
+            select(Usuarios).where(Usuarios.usuario == usuario.nombreLog)
+            ).first()
 
 @app.post("/register")
 def register(usuario: Usuarios):

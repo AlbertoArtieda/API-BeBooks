@@ -13,6 +13,7 @@ class Editorial(SQLModel, table=True):
 class UsuariosBase(SQLModel):
     nombre_apellidos: str
     usuario: str
+    token: Optional[str] = Field(default=None)
     ID_provincia: int
     cp: int
     email: str
@@ -24,7 +25,6 @@ class UsuariosBase(SQLModel):
 class Usuarios(UsuariosBase, table=True):
     ID_usuario: Optional[int] = Field(default=None, primary_key=True)
     password: str
-    token: Optional[str] = Field(default=None)
     provincia: Provincia = Relationship(
         sa_relationship_kwargs= {
             "primaryjoin": "foreign(Provincia.ID_provincia) == Usuarios.ID_provincia",
@@ -79,6 +79,5 @@ class Cambios(CambioBase, table=True):
     )
 
 class Login(SQLModel):
-    nombre: str
-    password: str
-    token: Optional[str] = Field(default=None)
+    nombreLog: str
+    passwordLog: str
