@@ -50,6 +50,12 @@ class Libros(LibroBase, table=True):
             "uselist": False
         }
     )
+    usuario: Usuarios = Relationship(
+        sa_relationship_kwargs= {
+            "primaryjoin": "foreign(Usuarios.ID_usuario) == Libros.ID_usuario",
+            "uselist": False
+        }
+    )
 
 class CambioBase(SQLModel):
     ID_user_compra: int
