@@ -19,7 +19,7 @@ def login(usuario: Login):
     with Session(engine) as session:
         usuario.password = sha256(usuario.password.encode()).hexdigest()
         user = session.exec(
-            select(Usuarios).where(Usuarios.password == usuario.password and Usuarios.usuario == usuario.nombre)
+            select(Usuarios).where(Usuarios.password == usuario.password).where(Usuarios.usuario == usuario.nombre)
         ).one()
         user.token = user.usuario + str(datetime.datetime.now())
         user.token = sha256(user.token.encode()).hexdigest()
