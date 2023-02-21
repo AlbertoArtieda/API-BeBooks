@@ -36,11 +36,11 @@ class LibroBase(SQLModel):
     ID_usuario: int
     activo: Optional[int] = Field(default=1)
     imagen_libro: str
+    editorial: str
 
 class Libros(LibroBase, table=True):
     ID_libro: Optional[int] = Field(default=None, primary_key=True)
     isbn: str = Field(index=True)
-    editorial: str
     usuario: Usuarios = Relationship(
         sa_relationship_kwargs= {
             "primaryjoin": "foreign(Usuarios.ID_usuario) == Libros.ID_usuario",
