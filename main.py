@@ -56,11 +56,14 @@ def getProvincias():
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
 
-@app.post("/saleshistory")
-def Saleshistory(usuario: Usuarios):
+@app.post("/givenBooks")
+def givenBooks(usuario: Login):
     with Session(engine) as session:
+        user = session.exec(
+            select(Usuarios).where(Usuarios.token == usuario.token)
+        ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == usuario.ID_usuario and Libros.activo == 0)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(usuario.token == user.token)
             ).all()
 
 @app.get("/searchBooks")

@@ -79,5 +79,6 @@ class Cambios(CambioBase, table=True):
     )
 
 class Login(SQLModel):
-    nombre: str
-    password: str
+    nombre: Optional[str] = Field(default=None)
+    password: Optional[str] = Field(default=None)
+    token: Optional[str] = Field(default=None)
