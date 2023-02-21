@@ -63,7 +63,7 @@ def givenBooks(usuario: Login):
             select(Usuarios).where(Usuarios.token == usuario.token)
         ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(usuario.token == user.token)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.user_vende == user.ID_usuario)
             ).all()
 
 @app.get("/searchBooks")
