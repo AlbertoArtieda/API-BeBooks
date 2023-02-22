@@ -29,7 +29,6 @@ class Usuarios(UsuariosBase, table=True):
     )
 
 class LibroBase(SQLModel):
-    ID_editorial: str
     titulo: str
     curso: str
     puntos: Optional[int] = Field(default=3)

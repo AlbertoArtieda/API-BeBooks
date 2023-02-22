@@ -63,7 +63,7 @@ def givenBooks(usuario: Login):
             select(Usuarios).where(Usuarios.token == usuario.token)
             ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(user.ID_usuario == Cambios.ID_user_vende)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn).where(Cambios.ID_user_vende == user.ID_usuario)
             ).all()
 
 @app.post("/gottenBooks")
@@ -73,7 +73,7 @@ def gottenBooks(usuario: Login):
             select(Usuarios).where(Usuarios.token == usuario.token)
             ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(user.ID_usuario == Cambios.ID_user_compra)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_compra == user.ID_usuario)
             ).all()
 
 @app.get("/searchBooks")
@@ -83,7 +83,7 @@ def SearchBooks():
             select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.activo == 1)
             ).all()
 
-# SELECT cambios.ID_cambio, libros.imagen_libro, libros.titulo, libros.isbn, cambios.fecha
+# SELECT libros.imagen_libro, libros.titulo, libros.isbn, cambios.fecha
 # FROM usuarios JOIN libros
 # ON usuarios.ID_Usuario = libros.ID_usuario
 # JOIN cambios
