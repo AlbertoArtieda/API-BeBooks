@@ -63,7 +63,7 @@ def givenBooks(usuario: Login):
             select(Usuarios).where(Usuarios.token == usuario.token)
             ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn).where(Cambios.ID_user_vende == user.ID_usuario)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
 
 @app.post("/gottenBooks")
@@ -73,7 +73,7 @@ def gottenBooks(usuario: Login):
             select(Usuarios).where(Usuarios.token == usuario.token)
             ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_compra == user.ID_usuario)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_compra == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
 
 @app.get("/searchBooks")
