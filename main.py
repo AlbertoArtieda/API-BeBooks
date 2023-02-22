@@ -62,9 +62,10 @@ def givenBooks(usuario: Login):
         user = session.exec(
             select(Usuarios).where(Usuarios.token == usuario.token)
             ).one()
-        return session.exec(
+        libro = session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
+        return [libro]
 
 @app.post("/gottenBooks")
 def gottenBooks(usuario: Login):
