@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Header
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
@@ -57,10 +57,11 @@ def getProvincias():
             ).all()
 
 @app.get("/givenBooks")
-def givenBooks(usuario: Login):
+def givenBooks(token: str = Header(default=None)):
     with Session(engine) as session:
+        print(token)
         user = session.exec(
-            select(Usuarios).where(Usuarios.token == usuario.token)
+            select(Usuarios).where(Usuarios.token == token)
             ).one()
         return session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
