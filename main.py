@@ -56,7 +56,7 @@ def getProvincias():
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
 
-@app.post("/givenBooks")
+@app.get("/givenBooks")
 def givenBooks(usuario: Login):
     with Session(engine) as session:
         user = session.exec(
