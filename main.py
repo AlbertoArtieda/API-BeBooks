@@ -64,9 +64,10 @@ def givenBooks(token: str = Header(default=None)):
         user = session.exec(
             select(Usuarios).where(Usuarios.token == token)
             ).one()
-        return session.exec(
+        libro = session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
+        return libro
 
 # @app.get("/givenBooks")
 # def givenBooks():
