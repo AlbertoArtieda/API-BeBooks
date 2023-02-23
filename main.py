@@ -56,22 +56,22 @@ def getProvincias():
             select(Provincia.provincia).order_by(Provincia.ID_provincia)
             ).all()
 
-# @app.post("/givenBooks")
-# def givenBooks(usuario: Login):
-#     with Session(engine) as session:
-#         user = session.exec(
-#             select(Usuarios).where(Usuarios.token == usuario.token)
-#             ).one()
-#         return session.exec(
-#             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
-#             ).all()
-
-@app.get("/givenBooks")
-def givenBooks():
+@app.post("/givenBooks")
+def givenBooks(usuario: Login):
     with Session(engine) as session:
+        user = session.exec(
+            select(Usuarios).where(Usuarios.token == usuario.token)
+            ).one()
         return session.exec(
-            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == 28, Libros.ID_libro == Cambios.ID_libro)
+            select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
+
+# @app.get("/givenBooks")
+# def givenBooks():
+#     with Session(engine) as session:
+#         return session.exec(
+#             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == 28, Libros.ID_libro == Cambios.ID_libro)
+#             ).all()
 
 @app.post("/gottenBooks")
 def gottenBooks(usuario: Login):
