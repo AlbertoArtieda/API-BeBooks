@@ -58,8 +58,9 @@ def getProvincias():
 
 @app.get("/givenBooks")
 def givenBooks(token: str = Header(default=None)):
+    token = token.replace('"','')
+    print(token)
     with Session(engine) as session:
-        print(token)
         user = session.exec(
             select(Usuarios).where(Usuarios.token == token)
             ).one()
