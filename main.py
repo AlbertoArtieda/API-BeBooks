@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
 from config import *
 from hashlib import sha256
+import datetime
 import os, binascii
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
@@ -23,7 +24,7 @@ def login(usuario: Login):
         user = session.exec(
             select(Usuarios).where(Usuarios.password == usuario.password).where(Usuarios.usuario == usuario.nombre)
         ).one()
-        user.token = binascii.b2a_hex(os.urandom(20))
+        user.token = binascii.b2a_hex(os.urandom(10))
         session.add(user)
         session.commit()
         session.refresh(user)
