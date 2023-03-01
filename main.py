@@ -24,7 +24,7 @@ def login(usuario: Login):
         user = session.exec(
             select(Usuarios).where(Usuarios.password == usuario.password).where(Usuarios.usuario == usuario.nombre)
         ).one()
-        user.token = binascii.b2a_hex(os.urandom(10))
+        user.token = binascii.b2a_hex(os.urandom(20))
         session.add(user)
         session.commit()
         session.refresh(user)
