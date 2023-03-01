@@ -59,7 +59,6 @@ def getProvincias():
 @app.get("/givenBooks")
 def givenBooks(token: str = Header(default=None)):
     token = token.replace('"','')
-    print(token)
     with Session(engine) as session:
         user = session.exec(
             select(Usuarios).where(Usuarios.token == token)
@@ -68,18 +67,12 @@ def givenBooks(token: str = Header(default=None)):
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
 
-# @app.get("/givenBooks")
-# def givenBooks():
-#     with Session(engine) as session:
-#         return session.exec(
-#             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == 28, Libros.ID_libro == Cambios.ID_libro)
-#             ).all()
-
 @app.post("/gottenBooks")
-def gottenBooks(usuario: Login):
+def gottenBooks(token: str = Header(default=None)):
+    token = token.replace('"','')
     with Session(engine) as session:
         user = session.exec(
-            select(Usuarios).where(Usuarios.token == usuario.token)
+            select(Usuarios).where(Usuarios.token == token)
             ).one()
         return session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_compra == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
@@ -90,6 +83,23 @@ def SearchBooks():
     with Session(engine) as session:
         return session.exec(
             select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.activo == 1)
+            ).all()
+
+@app.get("/userData")
+def userData(token: str = Header(default=None)):
+    with Session(engine) as session:
+        return session.exec(
+            select(Usuarios.nombre_apellidos, Usuarios.usuario, Usuarios.ID_provincia, Usuarios.cp, Usuarios.direccion, Usuarios.email, Usuarios.telefono, Usuarios.imagen_perfil, Usuarios.puntos).where(Usuarios.token == token)
+            ).one()
+
+@app.get("/userBooks")
+def SearchBooks(token: str = Header(default=None)):
+    with Session(engine) as session:
+        user = session.exec(
+            select(Usuarios).where(Usuarios.token == token)
+            ).one()
+        return session.exec(
+            select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.ID_usuario == user.ID_usuario)
             ).all()
 
 # SELECT libros.imagen_libro, libros.titulo, libros.isbn, cambios.fecha
