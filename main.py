@@ -16,7 +16,7 @@ app = FastAPI()
 def health_check():
     return "OK"
 
-# Recibe un usuario y contraseña y la encripa. Comprueba que existan los datos en la BBDD  y crea un token para dicho usuario
+# Recibe un usuario y password y la encripa. Comprueba que existan los datos en la BBDD y crea un token para dicho usuario
 @app.post("/login", status_code=status.HTTP_201_CREATED)
 def login(usuario: Login):
     with Session(engine) as session:
@@ -32,7 +32,7 @@ def login(usuario: Login):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return user.token
 
-# Recibe los datos del usuario y los registra en la BBDD
+# Recibe los datos del usuario, encripta la password y los registra en la BBDD
 @app.post("/register")
 def register(usuario: Usuarios):
     with Session(engine) as session:
@@ -115,3 +115,14 @@ def SearchBooks(token: str = Header(default=None)):
             select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.ID_usuario == user.ID_usuario).where(Libros.activo == 1)
             ).all()
 
+# Recibe la id del libro que se quiere "eliminar" y lo pone con activo a 0
+@app.get("/deleteBook")
+def deleteBook(id: int = Header(default=None)):
+    with Session(engine) as session:
+        book = session.exec(
+            select(Libros).where(Libros.ID_libro == id)
+            ).one()
+        book.activo = 0
+        session.add(book)
+        session.commit()
+        session.refresh(book)
