@@ -4,7 +4,6 @@ from sqlmodel import SQLModel, create_engine, Session, select
 from classes import *
 from config import *
 from hashlib import sha256
-import datetime
 import os, binascii
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
