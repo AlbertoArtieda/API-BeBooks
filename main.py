@@ -126,3 +126,33 @@ def deleteBook(id: int = Header(default=None)):
         session.add(book)
         session.commit()
         session.refresh(book)
+
+# Devolver los usuarios que tengn el mismo cp
+@app.get("/nearUsers")
+def SearchBooks(token: str = Header(default=None)):
+    token = token.replace('"', '')
+    with Session(engine) as session:
+        user_cp = session.exec(
+                select(Usuarios.cp).where(Usuarios.token == token)
+            ).one()
+        return session.exec(
+                select(Usuarios.imagen_perfil, Usuarios.ID_usuario, Usuarios.nombre_apellidos).where(Usuarios.cp == user_cp)
+            ).all()
+
+# Ver libros subidos de una perfil ajeno
+@app.get("/seeProfile")
+def show_different_profile(id: int = Header(default=None)):
+    with Session(engine) as session:
+        user_books = session.exec(
+            select(Libros.imagen_libro, Libros.titulo, Libros.isbn, Libros.ID_usuario).where(Libros.ID_usuario == id).where(Libros.activo == 1)
+        ).all()
+        return user_books
+
+# Devoler la imagen de perfil y el nombre del propietario de un libro subido
+@app.get("/showOwner")
+def show_different_profile(id: int = Header(default=None)):
+    with Session(engine) as session:
+        owner_info = session.exec(
+            select(Usuarios.nombre_apellidos, Usuarios.imagen_perfil).where(Usuarios.ID_usuario == id)
+        ).first()
+        return owner_info
