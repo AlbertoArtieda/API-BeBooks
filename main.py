@@ -90,7 +90,7 @@ def gottenBooks(token: str = Header(default=None)):
 def SearchBooks():
     with Session(engine) as session:
         return session.exec(
-            select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.activo == 1)
+            select(Libros.ID_libro, Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.activo == 1)
             ).all()
 
 # Recibe el token del usuario y devuelve todos los datos del usuario que ha hecho login para usarlos en la app
@@ -99,7 +99,7 @@ def userData(token: str = Header(default=None)):
     token = token.replace('"','')
     with Session(engine) as session:
         return session.exec(
-            select(Usuarios.nombre_apellidos, Usuarios.usuario, Usuarios.ID_provincia, Usuarios.cp, Usuarios.direccion, Usuarios.email, Usuarios.telefono, Usuarios.imagen_perfil, Usuarios.puntos).where(Usuarios.token == token)
+            select(Usuarios.nombre_apellidos, Usuarios.usuario, Usuarios.provincia.provincia, Usuarios.cp, Usuarios.direccion, Usuarios.email, Usuarios.telefono, Usuarios.imagen_perfil, Usuarios.puntos).where(Usuarios.token == token)
             ).one()
 
 # Recibe el token del usuario y devuelve todos los libros que el usuario tiene en venta (activo == 1)
