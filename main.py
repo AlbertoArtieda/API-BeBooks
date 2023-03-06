@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException, status, Header
-from fastapi.responses import JSONResponse
-from sqlmodel import SQLModel, create_engine, Session, select
+from fastapi import FastAPI, Depends, HTTPException, status, Header
+from sqlmodel import create_engine, Session, select
 from classes import *
 from config import *
 from hashlib import sha256
@@ -9,6 +8,14 @@ import os, binascii
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
 app = FastAPI()
+
+def comprobarUser(token: str = Header(default=None)):
+    token = token.replace('"','')
+    with Session(engine) as session:
+        user = session.exec(
+            select(Usuarios).where(Usuarios.token == token)
+            ).one()
+    return user
 
 # Comprobación de la conexión
 @app.get("/health")
@@ -63,24 +70,16 @@ def getProvincias():
 
 # Recibe el token del usuario y devuelve todos los libros que ha vendido un usuario
 @app.get("/givenBooks")
-def givenBooks(token: str = Header(default=None)):
-    token = token.replace('"','')
+def givenBooks(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
-        user = session.exec(
-            select(Usuarios).where(Usuarios.token == token)
-            ).one()
         return session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_vende == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
 
 # Recibe el token del usuario y devuelve todos los lubros que ha comprado un usuario
 @app.post("/gottenBooks")
-def gottenBooks(token: str = Header(default=None)):
-    token = token.replace('"','')
+def gottenBooks(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
-        user = session.exec(
-            select(Usuarios).where(Usuarios.token == token)
-            ).one()
         return session.exec(
             select(Libros.imagen_libro,Libros.titulo,Libros.isbn,Cambios.fecha).where(Cambios.ID_user_compra == user.ID_usuario, Libros.ID_libro == Cambios.ID_libro)
             ).all()
@@ -104,12 +103,8 @@ def userData(token: str = Header(default=None)):
 
 # Recibe el token del usuario y devuelve todos los libros que el usuario tiene en venta (activo == 1)
 @app.get("/userBooks")
-def SearchBooks(token: str = Header(default=None)):
-    token = token.replace('"','')
+def SearchBooks(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
-        user = session.exec(
-            select(Usuarios).where(Usuarios.token == token)
-            ).one()
         return session.exec(
             select(Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.ID_usuario == user.ID_usuario).where(Libros.activo == 1)
             ).all()
@@ -128,17 +123,12 @@ def deleteBook(id: int = Header(default=None)):
 
 # Devolver los usuarios que tengn el mismo cp
 @app.get("/nearUsers")
-def SearchBooks(token: str = Header(default=None)):
-    token = token.replace('"', '')
+def SearchBooks(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
-        user_cp = session.exec(
-                select(Usuarios.cp).where(Usuarios.token == token)
-            ).one()
         return session.exec(
-                select(Usuarios.imagen_perfil, Usuarios.ID_usuario, Usuarios.nombre_apellidos).where(Usuarios.cp == user_cp)
+                select(Usuarios.imagen_perfil, Usuarios.ID_usuario, Usuarios.nombre_apellidos).where(Usuarios.cp == user.cp)
             ).all()
             
-
 # Ver libros subidos de una perfil ajeno
 @app.get("/seeProfile")
 def show_different_profile(id: int = Header(default=None)):
