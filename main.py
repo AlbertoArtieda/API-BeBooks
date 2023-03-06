@@ -135,7 +135,7 @@ def SearchBooks(token: str = Header(default=None)):
                 select(Usuarios.cp).where(Usuarios.token == token)
             ).one()
         return session.exec(
-                select(Usuarios.imagen_perfil, Usuarios.ID_usuario, Usuarios.nombre_apellidos).where(Usuarios.cp == user_cp)
+                select(Usuarios.imagen_perfil,Libros.imagen_libro, Libros.isbn, Libros.titulo, Usuarios.nombre_apellidos).where(Usuarios.cp == user_cp).where(Usuarios.ID_usuario == Libros.ID_usuario).where(Libros.activo == 1)
             ).all()
 
 # Ver libros subidos de una perfil ajeno
