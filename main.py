@@ -147,11 +147,11 @@ def show_different_profile(id: int = Header(default=None)):
         ).first()
         return owner_info
 
+# Borra el token del usuario para poder hacer LogOut
 @app.get("/deleteToken")
 def show_different_profile(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
         user.token = ""
-        print(user.token)
         session.add(user)
         session.commit()
         session.refresh(user)
