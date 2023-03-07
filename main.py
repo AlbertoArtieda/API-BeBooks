@@ -146,3 +146,12 @@ def show_different_profile(id: int = Header(default=None)):
             select(Usuarios.nombre_apellidos, Usuarios.imagen_perfil).where(Usuarios.ID_usuario == id)
         ).first()
         return owner_info
+
+@app.get("/deleteToken")
+def show_different_profile(user : Usuarios = Depends(comprobarUser)):
+    with Session(engine) as session:
+        user.token = ""
+        print(user.token)
+        session.add(user)
+        session.commit()
+        session.refresh(user)
