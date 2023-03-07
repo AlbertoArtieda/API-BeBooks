@@ -148,7 +148,7 @@ def show_different_profile(id: int = Header(default=None)):
         return owner_info
 
 # Borra el token del usuario para poder hacer LogOut
-@app.get("/deleteToken")
+@app.post("/deleteToken")
 def show_different_profile(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
         user.token = ""
