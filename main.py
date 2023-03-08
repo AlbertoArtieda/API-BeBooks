@@ -4,6 +4,8 @@ from classes import *
 from config import *
 from hashlib import sha256
 import os, binascii
+import requests
+import json
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
@@ -121,7 +123,7 @@ def deleteBook(id: int = Header(default=None)):
         session.commit()
         session.refresh(book)
 
-# Devolver los usuarios que tengn el mismo cp
+# Devuelve los usuarios que tengan el mismo cp
 @app.get("/nearUsers")
 def SearchBooks(user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
@@ -129,7 +131,7 @@ def SearchBooks(user : Usuarios = Depends(comprobarUser)):
                 select(Usuarios.imagen_perfil, Usuarios.ID_usuario, Usuarios.nombre_apellidos).where(Usuarios.cp == user.cp)
             ).all()
             
-# Ver libros subidos de una perfil ajeno
+# Muestra libros subidos de una perfil ajeno
 @app.get("/seeProfile")
 def show_different_profile(id: int = Header(default=None)):
     with Session(engine) as session:
@@ -138,7 +140,7 @@ def show_different_profile(id: int = Header(default=None)):
         ).all()
         return user_books
 
-# Devoler la imagen de perfil y el nombre del propietario de un libro subido
+# Devuelve la imagen de perfil y el nombre del propietario de un libro subido
 @app.get("/showOwner")
 def show_different_profile(id: int = Header(default=None)):
     with Session(engine) as session:
@@ -155,3 +157,35 @@ def show_different_profile(user : Usuarios = Depends(comprobarUser)):
         session.add(user)
         session.commit()
         session.refresh(user)
+
+@app.post("/getbookinfo")
+def get_book_info(isbn: str = Header(default=None)):
+    result = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
+
+    book = result.json()
+    items = book.get("items")
+
+    encoded = json.dumps(items)
+    decoded = json.loads(encoded)
+    
+    titulo = decoded[0]["volumeInfo"]["title"]
+    print(titulo)
+    editorial = decoded[0]["volumeInfo"].get("publisher") # get() es para que devuelva "None" en vez de un error si no encuentra la clave "publisher"
+    
+    charactersToRemove = (",", ".", ":")
+    for i in charactersToRemove:
+        titulo = titulo.replace(i, "")
+
+    cursos = ("eso", "ESO", "bachillerato", "Bachillerato", "BACHILLERATO", "primaria", "Primaria", "PRIMARIA")
+    for i in cursos:
+        if i in titulo.split():
+            i_curso = titulo.split().index(i)
+            curso = titulo.split()[i_curso-1] + " " + titulo.split()[i_curso]
+            
+            titulo = titulo.replace(curso, "")
+
+            if editorial != None:
+                return titulo, curso, editorial
+            else:
+                return titulo, curso, "Sin editorial"
+    return "No es un libro de instituto o colegio"
