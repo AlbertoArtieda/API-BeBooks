@@ -89,7 +89,7 @@ def gottenBooks(user : Usuarios = Depends(comprobarUser)):
 def SearchBooks():
     with Session(engine) as session:
         return session.exec(
-            select(Libros.ID_libro, Libros.imagen_libro, Libros.titulo, Libros.isbn).where(Libros.activo == 1)
+            select(Libros.ID_libro, Libros.imagen_libro, Libros.titulo, Libros.isbn, Libros.ID_usuario).where(Libros.activo == 1)
             ).all()
 
 # Recibe el token del usuario y devuelve todos los datos del usuario que ha hecho login para usarlos en la app
