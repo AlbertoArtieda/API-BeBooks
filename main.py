@@ -4,8 +4,7 @@ from classes import *
 from config import *
 from hashlib import sha256
 import os, binascii
-import requests
-import json
+import requests, json
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
