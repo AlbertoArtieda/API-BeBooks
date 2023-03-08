@@ -160,7 +160,7 @@ def show_different_profile(user : Usuarios = Depends(comprobarUser)):
 
 @app.post("/getbookinfo")
 def get_book_info(isbn: str = Header(default=None)):
-    result = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
+    result = requests.get("https://www.googleapis.com/books/v1/volumes?q=", isbn)
 
     book = result.json()
     items = book.get("items")
