@@ -98,7 +98,7 @@ def userData(token: str = Header(default=None)):
     token = token.replace('"','')
     with Session(engine) as session:
         return session.exec(
-            select(Usuarios.nombre_apellidos, Usuarios.usuario, Usuarios.ID_provincia, Usuarios.cp, Usuarios.direccion, Usuarios.email, Usuarios.telefono, Usuarios.imagen_perfil, Usuarios.puntos).where(Usuarios.token == token)
+            select(Usuarios.nombre_apellidos, Usuarios.usuario, Provincia.provincia, Usuarios.cp, Usuarios.direccion, Usuarios.email, Usuarios.telefono, Usuarios.imagen_perfil, Usuarios.puntos).where(Usuarios.token == token, Usuarios.ID_provincia == Provincia.ID_provincia)
             ).one()
 
 # Recibe el token del usuario y devuelve todos los libros que el usuario tiene en venta (activo == 1)
