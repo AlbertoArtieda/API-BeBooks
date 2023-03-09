@@ -154,7 +154,7 @@ def SearchBooks(user : Usuarios = Depends(comprobarUser)):
 def show_different_profile(id: int = Header(default=None)):
     with Session(engine) as session:
         user_books = session.exec(
-            select(Libros.imagen_libro, Libros.titulo, Libros.isbn, Libros.ID_usuario).where(Libros.ID_usuario == id).where(Libros.activo == 1)
+            select(Libros.imagen_libro, Libros.titulo, Libros.isbn, Libros.ID_usuario, Libros.ID_libro).where(Libros.ID_usuario == id).where(Libros.activo == 1)
         ).all()
         return user_books
 
