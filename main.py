@@ -56,10 +56,29 @@ def newbook(libro: Libros):
 
 # Al confirmar un cambio se añaden los datos de dicho cambio a la BBDD
 @app.post("/change")
-def change(cambio: Cambios):
+def change(cambio: Cambios, user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
+        cambio.ID_user_compra = user.ID_usuario
+
+        users_vende_points = session.exec(
+            select(Usuarios.puntos).where(Usuarios.ID_usuario == cambio.ID_user_vende)
+        ).one()
+        changed_book = session.exec(
+            select(Libros).where(Libros.ID_usuario == cambio.ID_user_vende)
+        ).one()
+
+        user.puntos -= 3
+        users_vende_points += 3
+        changed_book.activo = 0
+
+        # Arreglar los cambios en las tablas
+        session.add(user)
         session.add(cambio)
+        session.add(changed_book)
         session.commit()
+        session.refresh(user)
+        session.refresh(cambio)
+        session.refresh(changed_book)
 
 # Devuelve todos los nombres de las provincias que hay en BBDD para usarlos en un DropDownList de la app
 @app.get("/getProvincias")
