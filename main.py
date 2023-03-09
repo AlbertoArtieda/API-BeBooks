@@ -4,7 +4,7 @@ from classes import *
 from config import *
 from hashlib import sha256
 import os, binascii
-# import requests, json
+import requests, json
 
 engine = create_engine(f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}")
 
@@ -157,34 +157,34 @@ def show_different_profile(user : Usuarios = Depends(comprobarUser)):
         session.commit()
         session.refresh(user)
 
-# @app.post("/getbookinfo")
-# def get_book_info(isbn: str = Header(default=None)):
-#     result = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
+@app.post("/getbookinfo")
+def get_book_info(isbn: str = Header(default=None)):
+    result = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
 
-#     book = result.json()
-#     items = book.get("items")
+    book = result.json()
+    items = book.get("items")
 
-#     encoded = json.dumps(items)
-#     decoded = json.loads(encoded)
+    encoded = json.dumps(items)
+    decoded = json.loads(encoded)
     
-#     titulo = decoded[0]["volumeInfo"]["title"]
-#     print(titulo)
-#     editorial = decoded[0]["volumeInfo"].get("publisher") # get() es para que devuelva "None" en vez de un error si no encuentra la clave "publisher"
+    titulo = decoded[0]["volumeInfo"]["title"]
+    print(titulo)
+    editorial = decoded[0]["volumeInfo"].get("publisher") # get() es para que devuelva "None" en vez de un error si no encuentra la clave "publisher"
     
-#     charactersToRemove = (",", ".", ":")
-#     for i in charactersToRemove:
-#         titulo = titulo.replace(i, "")
+    charactersToRemove = (",", ".", ":")
+    for i in charactersToRemove:
+        titulo = titulo.replace(i, "")
 
-#     cursos = ("eso", "ESO", "bachillerato", "Bachillerato", "BACHILLERATO", "primaria", "Primaria", "PRIMARIA")
-#     for i in cursos:
-#         if i in titulo.split():
-#             i_curso = titulo.split().index(i)
-#             curso = titulo.split()[i_curso-1] + " " + titulo.split()[i_curso]
+    cursos = ("eso", "ESO", "bachillerato", "Bachillerato", "BACHILLERATO", "primaria", "Primaria", "PRIMARIA")
+    for i in cursos:
+        if i in titulo.split():
+            i_curso = titulo.split().index(i)
+            curso = titulo.split()[i_curso-1] + " " + titulo.split()[i_curso]
             
-#             titulo = titulo.replace(curso, "")
+            titulo = titulo.replace(curso, "")
 
-#             if editorial != None:
-#                 return titulo, curso, editorial
-#             else:
-#                 return titulo, curso, "Sin editorial"
-#     return "No es un libro de instituto o colegio"
+            if editorial != None:
+                return titulo, curso, editorial
+            else:
+                return titulo, curso, "Sin editorial"
+    return "No es un libro de instituto o colegio"
