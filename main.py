@@ -60,23 +60,25 @@ def change(cambio: Cambios, user : Usuarios = Depends(comprobarUser)):
     with Session(engine) as session:
         cambio.ID_user_compra = user.ID_usuario
 
-        users_vende_points = session.exec(
-            select(Usuarios.puntos).where(Usuarios.ID_usuario == cambio.ID_user_vende)
+        users_vende = session.exec(
+            select(Usuarios).where(Usuarios.ID_usuario == cambio.ID_user_vende)
         ).one()
         changed_book = session.exec(
             select(Libros).where(Libros.ID_usuario == cambio.ID_user_vende)
         ).one()
 
         user.puntos -= 3
-        users_vende_points += 3
+        users_vende.puntos += 3
         changed_book.activo = 0
 
         # Arreglar los cambios en las tablas
         session.add(user)
+        session.add(users_vende)
         session.add(cambio)
         session.add(changed_book)
         session.commit()
         session.refresh(user)
+        session.refresh(users_vende)
         session.refresh(cambio)
         session.refresh(changed_book)
 
