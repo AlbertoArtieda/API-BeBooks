@@ -72,15 +72,17 @@ def change(cambio: Cambios, user : Usuarios = Depends(comprobarUser)):
         changed_book.activo = 0
 
         # Arreglar los cambios en las tablas
-        session.add(user)
-        session.add(users_vende)
-        session.add(cambio)
-        session.add(changed_book)
+        session.add(user, users_vende, cambio, changed_book)
+        # session.add(user)
+        # session.add(users_vende)
+        # session.add(cambio)
+        # session.add(changed_book)
         session.commit()
-        session.refresh(user)
-        session.refresh(users_vende)
-        session.refresh(cambio)
-        session.refresh(changed_book)
+        session.refresh(user, users_vende, cambio, changed_book)
+        # session.refresh(user)
+        # session.refresh(users_vende)
+        # session.refresh(cambio)
+        # session.refresh(changed_book)
 
 # Devuelve todos los nombres de las provincias que hay en BBDD para usarlos en un DropDownList de la app
 @app.get("/getProvincias")
