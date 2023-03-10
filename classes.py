@@ -54,7 +54,7 @@ class CambioBase(SQLModel):
 
 class Cambios(CambioBase, table=True):
     ID_cambio: Optional[int] = Field(default=None, primary_key=True)
-    fecha: datetime
+    fecha: Optional [datetime] = Field(default=None)
     user_compra: Usuarios = Relationship(
         sa_relationship_kwargs= {
             "primaryjoin": "foreign(Usuarios.ID_usuario) == Cambios.ID_user_compra",
